@@ -57,7 +57,7 @@ El código JavaScript está separado por responsabilidades para facilitar manten
 🚀 Cómo ejecutar el proyecto
 1. Clonar el repositorio:
 
-git clone https://github.com/cristianhernandez-dev/alke-wallet-final.git
+git clone https://github.com/cristianhernandez-dev/Proyecto-Alke-Wallet.git
 
 2. Abrir el proyecto en Visual Studio Code.
 3. Ejecutar con Live Server (recomendado).
