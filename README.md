@@ -17,6 +17,8 @@ LocalStorage — persistencia de datos en el navegador
 🔐 Credenciales de acceso (simulación)
 La aplicación no cuenta con backend, por lo que el login es simulado.
 
+usuario y contraseñas necesarios para ingresar a operar con la wallet.
+
 Usuario: alumno@wallet.cl
 Contraseña: 123456
 
@@ -64,5 +66,6 @@ git clone https://github.com/cristianhernandez-dev/Proyecto-Alke-Wallet.git
 4. Acceder a login.html.
 
 📌 Autor
-Cristián Hernández
+
+Cristián Hernández Muñoz
 Proyecto desarrollado como parte de formación en Front-End Trainee.
