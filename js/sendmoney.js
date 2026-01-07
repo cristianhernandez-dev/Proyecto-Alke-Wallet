@@ -1,5 +1,11 @@
 $(document).ready(function () {
 
+  // Verificar sesión
+  if (!localStorage.getItem('isLogged')) {
+    window.location.href = 'login.html';
+    return;
+  }
+
   let selectedContactIndex = null;
 
   /* =========================
@@ -19,6 +25,14 @@ $(document).ready(function () {
 
   function clearAlert() {
     $('#alert-container').empty();
+  }
+
+  function showAlert(message, type) {
+    $('#alert-container').html(`
+      <div class="alert alert-${type}">
+        ${message}
+      </div>
+    `);
   }
 
   function renderAvailableBalance() {
@@ -66,8 +80,6 @@ $(document).ready(function () {
 
     renderContacts();
     showAlert('Contacto agregado correctamente', 'success');
-
-    // opcional: auto-limpiar alerta
     setTimeout(() => clearAlert(), 2500);
   });
 
@@ -93,6 +105,7 @@ $(document).ready(function () {
 
     $('#availableBalanceLine').addClass('d-none').text('');
     clearAlert();
+    $('.contact-item').removeClass('active');
   }
 
   /* =========================
@@ -137,7 +150,7 @@ $(document).ready(function () {
     const contacts = JSON.parse(localStorage.getItem('contacts')) || [];
     const contact = contacts[selectedContactIndex];
 
-    // descontar saldo y guardar seguro
+    // descontar saldo
     balance -= amount;
     setSafeBalance(balance);
 
@@ -151,32 +164,20 @@ $(document).ready(function () {
     });
     localStorage.setItem('transactions', JSON.stringify(transactions));
 
+    // feedback
     showAlert(`Envío realizado a ${contact?.name ?? 'Contacto'}`, 'success');
 
-    // actualizar línea de saldo
+    // actualizar saldo visible
     renderAvailableBalance();
 
-    // ocultar aviso para que no quede pegado
-    setTimeout(() => {
-      clearAlert();
-    }, 3000);
+    // ocultar mensaje para que no quede pegado
+    setTimeout(() => clearAlert(), 3000);
 
-    // opcional: ocultar botón hasta seleccionar nuevamente
+    // reset selección
     $('#btnSendMoney').addClass('d-none');
     selectedContactIndex = null;
     $('.contact-item').removeClass('active');
   });
-
-  /* =========================
-     ALERTAS
-  ========================= */
-  function showAlert(message, type) {
-    $('#alert-container').html(`
-      <div class="alert alert-${type}">
-        ${message}
-      </div>
-    `);
-  }
 
   // Inicializar
   renderContacts();
