@@ -1,64 +1,48 @@
-$(document).ready(function () {
-
-  // Verificar sesión
-  if (!localStorage.getItem('isLogged')) {
+// Verificar sesión
+if (!localStorage.getItem('isLogged')) {
     window.location.href = 'login.html';
-    return;
-  }
+}
 
-  function getSafeBalance() {
-    const raw = localStorage.getItem('balance');
-    const cleaned = (raw ?? '').toString().replace(/[^\d.-]/g, '');
-    const balance = Number(cleaned);
-    return Number.isFinite(balance) ? balance : 0;
-  }
+// Mostrar saldo actual
+$('#currentBalance').text(`$${Number(localStorage.getItem('balance') || 0).toLocaleString('es-CL')}`);
 
-  function setSafeBalance(value) {
-    const num = Number(value);
-    localStorage.setItem('balance', Number.isFinite(num) ? num.toString() : '0');
-  }
 
-  function showAlert(message, type) {
-    $('#alert-container').html(`
-      <div class="alert alert-${type}">
-        ${message}
-      </div>
-    `);
-  }
-
-  // Mostrar saldo actual
-  const currentBalance = getSafeBalance();
-  $('#currentBalance').text(`$${currentBalance.toLocaleString('es-CL')}`);
-
-  // Evento depósito
-  $('#depositForm').on('submit', function (e) {
+$('#depositForm').submit(function (e) {
     e.preventDefault();
 
-    const amount = Number($('#depositAmount').val()); // ✅ ID correcto
+    const amount = Number($('#depositAmount').val());
 
-    if (!Number.isFinite(amount) || amount <= 0) {
-      showAlert('Ingresa un monto válido.', 'danger');
-      return;
+    // Alerta de valor
+    if (amount <= 0) {
+        $('#alert-container').html(`
+            <div class="alert alert-danger">
+                Monto inválido
+            </div>
+        `);
+        return;
     }
 
-    const balance = getSafeBalance() + amount;
-    setSafeBalance(balance);
+    let balance = Number(localStorage.getItem('balance'));
+    let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-    // Registrar transacción
-    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    balance += amount;
+
     transactions.push({
-      type: 'deposit',
-      amount: amount,
-      date: new Date().toLocaleString('es-CL')
+        type: 'deposit',
+        amount: amount,
+        date: new Date().toLocaleString()
     });
+
+    localStorage.setItem('balance', balance.toString());
     localStorage.setItem('transactions', JSON.stringify(transactions));
 
-    showAlert(`Depósito realizado por $${amount.toLocaleString('es-CL')}. Redirigiendo...`, 'success');
+    $('#alert-container').html(`
+        <div class="alert alert-success">
+            Depósito realizado con éxito. Monto depositado: $${amount}
+        </div>
+    `);
 
-    // Redirigir a movimientos (mejor UX para ver el resultado)
     setTimeout(() => {
-      window.location.href = 'transactions.html';
-    }, 1200);
-  });
-
+    window.location.href = 'transactions.html';
+}, 2000);
 });
